@@ -1,0 +1,14 @@
+/* ------------------------------------------
+Return EM value from context pixel value
+https://css-tricks.com/snippets/sass/px-to-em-functions/
+------------------------------------------*/
+@function em($px, $context: $base-font-size){
+	@return #{$px/$context}em;
+}
+
+/* ------------------------------------------
+Return REM value from base pixel value
+------------------------------------------*/
+@function rem($px, $base: $base-font-size){
+	@return #{$px/$base}rem;
+}
