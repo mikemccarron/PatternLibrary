@@ -1,0 +1,27 @@
+{
+	"name": "mmcc-pattern-library",
+	"description": "A web development library based on Atomic Design and SMACSS principals",
+	"main": [
+		"styles/app.scss",
+		"scripts/app.js"
+	],
+	"moduleType": [
+		"amd",
+		"es6",
+		"globals"
+	],
+	"authors": [
+		"Mike McCarron <mike@mikemccarron.com>"
+	],
+	"license": "MIT",
+	"homepage": "https://github.com/mikemccarron/PatternLibrary",
+	"private": true,
+	"ignore": [
+		"**/.*",
+		"node_modules",
+		"bower_components"
+	],
+	"dependencies": {
+		"requirejs-bower": "~2.3.3"
+	}
+}

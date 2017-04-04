@@ -1,0 +1,24 @@
+{
+	"name": "my-project",
+	"version": "1.0.0",
+	"scripts": {
+		"build": "babel src -d lib"
+	},
+	"devDependencies": {
+		"gulp": "*",
+		"gulp-util": "^3.0.8",
+		"gulp-plumber": "^1.1.0",
+
+		"main-bower-files": "^2.13.1",
+		"gulp-bower-normalize": "^1.1.1",
+
+		"gulp-babel": "^6.1.2",
+		"babel-cli": "^6.0.0",
+		"gulp-concat": "^2.6.1",
+		"gulp-sourcemaps": "^2.4.1",
+
+		"gulp-sass": "^3.1.0",
+		"gulp-autoprefixer": "^3.1.1",
+		"gulp-notify": "^3.0.0"
+	}
+}
