@@ -9,12 +9,13 @@ var gulp 			= require('gulp'),
 	bowerNormalizer = require('gulp-bower-normalize'),
 
 	babel 		= require('gulp-babel'),
-	// babelcli 	= require('babel-cli"'),
+	babelCore 	= require('babel-core'),
+	babelPoly 	= require('babel-polyfill'),
 	concat 		= require('gulp-concat'),
 	sourcemaps 	= require('gulp-sourcemaps'),
 
-	// jshint 		= require('gulp-jshint'),
-	// closure 	= require('gulp-closure-compiler'),
+	jshint 		= require('gulp-jshint'),
+	closure 	= require('gulp-closure-compiler'),
 
 	sass 		= require('gulp-sass'),
 	prefixer 	= require('gulp-autoprefixer'),
@@ -35,18 +36,18 @@ Settings
 */
 var basePaths = {
 	prod: "",
-	dist: ""
+	dist: "../"
 }
 
 var settings = {
 	"javascript":{
-		prod: basePaths.prod + '',
-		dist: basePaths.dist,
+		prod: basePaths.prod + 'scripts/',
+		dist: basePaths.dist + 'js/',
 		compiler: ''
 
 	},
 	"css":{
-		prod: basePaths.prod + '',
+		prod: basePaths.prod + 'styles/',
 		dist: basePaths.dist + ''
 	},
 	"html":{
@@ -54,8 +55,8 @@ var settings = {
 		dist: basePaths.dist
 	},
 	"images":{
-		prod: basePaths.prod + '',
-		dist: basePaths.dist + ''
+		prod: basePaths.prod + 'assets/',
+		dist: basePaths.dist + 'img/'
 	},
 	"svgs":{
 		prod: basePaths.prod + '',
@@ -95,29 +96,34 @@ gulp.task('watch', function() {
 JS
 ------------------------------*/
 gulp.task('js', function() {
-	gutil.log( gutil.colors.bgGreen('\nCompiling Javascript')) ;
-	gutil.log( gutil.colors.green('\t[' + settings["javascript"].prod + '] => [' + settings["javascript"].dist + ']') );
-	gutil.log( gutil.colors.green('\tRunning through JSHint...') );
-	gutil.log( gutil.colors.green('\tRunning through Babel...') );
+	gutil.log( gutil.colors.bold.bgBlue('Compiling Javascript')) ;
+	gutil.log( gutil.colors.cyan('\t[' + settings["javascript"].prod + '] => [' + settings["javascript"].dist + ']') );
+	gutil.log( gutil.colors.cyan('\tRunning through JSHint...') );
+	gutil.log( gutil.colors.cyan('\tRunning through Babel...') );
 	gutil.log('\n');
 
 	return gulp.src( settings["javascript"].prod + '*.js')
 		.pipe( plumber({
 			errorHandler: notify.onError("Error: <%= error.message %>")
 		}) )
+		.pipe(sourcemaps.init())
 		.pipe( jshint() )
-		.pipe( babel() )
+		.pipe( babel({
+            presets: ['env']
+		}) )
+		.pipe( concat('app.js') )
+		.pipe( sourcemaps.write('.') )
 		.pipe( plumber.stop() )
 		.pipe( gulp.dest( settings["javascript"].dist ));
 });
 
 gulp.task('compress-js', function(){
-	console.log('Compressing JS ['+ settings["javascript"].dist +'app.js] with Closure Compiler...');
-	console.log('\n');
+	gutil.log( gutil.colors.blue('Compressing JS ['+ settings["javascript"].dist +'app.js] with Closure Compiler...') );
+	gutil.log('\n');
 
 	return gulp.src( settings["javascript"].dist +'**/*.js')
 		.pipe( plumber({ errorHandler: notify.onError("Error: <%= error.message %>")} ))
-		.pipe(closure({
+		.pipe(closureCompiler({
 			compilerPath:  settings["javascript"].compiler,
 			fileName: 'scripts.min.js'
 		}))
@@ -126,9 +132,9 @@ gulp.task('compress-js', function(){
 });
 
 gulp.task('js-concat', function() {
-	console.log('\nNew Plugin Found:');
-	console.log('\tCombining it to [' + settings["javascript"].dist + 'plugins]' + ' file...');
-	console.log('\n');
+	gutil.log( gutil.colors.bold.bgBlue('\nNew Plugin Found:') );
+	gutil.log( gutil.colors.cyan('\tCombining it to [' + settings["javascript"].dist + 'plugins]' + ' file...') );
+	gutil.log('\n');
 
 	return gulp.src( settings["javascript"].prod+'plugins/*.js' )
 		.pipe( concat('plugins.js'))
@@ -139,7 +145,7 @@ gulp.task('js-concat', function() {
 CSS
 ------------------------------*/
 gulp.task('sass', function() {
-	console.log('\nCompiling SCSS to CSS...');
+	gutil.log( gutil.colors.bold.bgGreen('Compiling SCSS to CSS...') );
 	return gulp.src( settings["css"].prod + '**/*.scss')
 		.pipe( plumber({ errorHandler: notify.onError("Error: <%= error.message %>")} ))
 		.pipe( sass({
@@ -153,7 +159,7 @@ gulp.task('sass', function() {
 });
 
 gulp.task('prefix-css', ['sass'], function () {
-	console.log('\nAppending browsers prefixes [\'last 2 versions\', \'> 5%\', \'Explorer > 10\'] to CSS...\n');
+	gutil.log( gutil.colors.bgGreen('\nAppending browsers prefixes [\'last 2 versions\', \'> 5%\', \'Explorer > 10\'] to CSS...\n') );
 	return gulp.src( settings["css"].dist + '*.css')
 		.pipe( plumber({ errorHandler: notify.onError("Error: <%= error.message %>")} ))
 		.pipe( prefixer({ browsers: ['last 2 versions', '> 5%', 'Explorer > 10'] }))
